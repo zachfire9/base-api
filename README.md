@@ -7,14 +7,6 @@
 * JWT Authentication
 * Swagger Docs
 
-## Swagger Docs
-
-Once the app is started you can replace the url with where the app is running on localhost:
-
-```
-{url}/api/docs
-```
-
 ## Initialize DB
 
 ```
