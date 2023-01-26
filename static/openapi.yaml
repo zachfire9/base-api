@@ -1,0 +1,170 @@
+openapi: 3.0.3
+info:
+  title: Base API - OpenAPI 3.0
+  description: |-
+    API template that can be used as a starting point for a new service 
+  contact:
+    email: zachfire9@gmail.com
+  version: 0.1.0
+externalDocs:
+  description: GitHub Repo
+  url: https://github.com/zachfire9/base-api
+tags:
+  - name: login
+    description: Initiate a session to use the API
+  - name: user
+    description: User operations
+paths:
+  /login:
+    post:
+      tags:
+        - login
+      summary: Start a session
+      description: 'Use seedpassword1 for testing.'
+      operationId: addLogin
+      requestBody:
+        description: Start a new session
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'          
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'          
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: ''
+      operationId: createUser
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        description: User object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'          
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'          
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'          
+  /user/{id}:
+    get:
+      tags:
+        - user
+      summary: Get user by id
+      description: ''
+      operationId: getUserById
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: 'The id of the user that needs to be fetched. Use 2 for testing.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'          
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'          
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'          
+components:
+  schemas:
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        email:
+          type: string
+          example: john@email.com
+        role:
+          type: string
+          example: 'basic'
+  requestBodies:
+    UserArray:
+      description: List of user object
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-access-token

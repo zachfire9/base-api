@@ -8,7 +8,7 @@ import yaml
 
 from datetime import datetime, timedelta
 from functools import wraps
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, render_template
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
@@ -67,7 +67,12 @@ def authenticate(f):
 
     return decorated
 
-@app.route("/", methods = ['POST', 'GET'])
+@app.route("/", methods = ['GET'])
+def get_root():
+    print('sending root')
+    return render_template('index.html')
+
+@app.route("/", methods = ['POST'])
 @limiter.limit("10/minute")
 def index():
     return jsonify(error="Route not implemented"), 501
