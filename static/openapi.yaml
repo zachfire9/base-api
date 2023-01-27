@@ -20,7 +20,7 @@ paths:
       tags:
         - login
       summary: Start a session
-      description: 'Use seedpassword1 for testing.'
+      description: 'The token value returned will be sent as the x-access-token header value in subsequent requests.'
       operationId: addLogin
       requestBody:
         description: Start a new session
@@ -42,7 +42,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'          
-  /user:
+  /users:
     post:
       tags:
         - user
@@ -76,7 +76,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'          
-  /user/{id}:
+  /users/{id}:
     get:
       tags:
         - user
@@ -118,19 +118,19 @@ components:
       properties:
         email:
           type: string
-          example: john@email.com
+          example: admin@gmail.com
         password:
           type: string
-          example: '12345'
+          example: 'seedpassword1'
     User:
       type: object
       properties:
         email:
           type: string
-          example: john@email.com
+          example: swagger@gmail.com
         password:
           type: string
-          example: '12345'
+          example: 'swagger3'
     ErrorResponse:
       type: object
       properties:
@@ -147,10 +147,10 @@ components:
         id:
           type: integer
           format: int64
-          example: 10
+          example: 3
         email:
           type: string
-          example: john@email.com
+          example: swagger@gmail.com
         role:
           type: string
           example: 'basic'
