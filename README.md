@@ -103,4 +103,5 @@ python -m unittest tests\validate\test_user.py
 
 ## ToDo
 
-* ACL
+Implement Flask-Authorize for ACL and RBAC:
+https://flask-authorize.readthedocs.io/en/latest/
