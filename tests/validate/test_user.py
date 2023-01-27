@@ -14,6 +14,10 @@ class UserTest(unittest.TestCase):
         self.assertEqual(http_code, 400)
         self.assertEqual(error, 'Missing email')
 
+        http_code, error = User.validate('test', None)
+        self.assertEqual(http_code, 400)
+        self.assertEqual(error, 'Invalid email format')
+
         http_code, error = User.validate('test@aol.com', None)
         self.assertEqual(http_code, 400)
         self.assertEqual(error, 'Missing password')
