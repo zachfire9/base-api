@@ -1,5 +1,7 @@
 # Base API
 
+API template that can be used as a starting point for a new service
+
 ## Features
 
 * Rate Limiting
