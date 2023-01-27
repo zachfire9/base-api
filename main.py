@@ -13,6 +13,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 from models import db, LogsModel, UserModel
+from validate.user import User
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
@@ -30,6 +31,7 @@ app.logger.setLevel(logging.DEBUG)
 
 @app.before_request
 def log_request_info():
+    """Sanitize and log request data to the console."""
     app.logger.debug('Request URL: %s', request.url)
 
     sanitized_headers = ''
@@ -48,6 +50,7 @@ def log_request_info():
 def authenticate(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        """Validate the jwt token used for authentication."""
         token = request.headers.get('x-access-token')
 
         if not token:
@@ -69,7 +72,7 @@ def authenticate(f):
 
 @app.route("/", methods = ['GET'])
 def get_root():
-    print('sending root')
+    """Display the swagger docs."""
     return render_template('index.html')
 
 @app.route("/", methods = ['POST'])
@@ -80,6 +83,7 @@ def index():
 @app.route('/login', methods =['POST'])
 @limiter.limit("10/minute")
 def login():
+    """Authenticate and receive a token that can be used in subsequent requests."""
     email = request.get_json().get('email')
     password = request.get_json().get('password')
     encrypted_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
@@ -107,16 +111,13 @@ def login():
 @authenticate
 @limiter.limit("10/minute")
 def users(user):
+    """Create a new user."""
     user_email = request.get_json().get('email')
     user_password = request.get_json().get('password')
+    http_code, error_message = User().validate(user_email, user_password)
 
-    user_email = request.get_json().get('email')
-    if not user_email:
-        return jsonify(error="Missing email"), 400
-
-    user_password = request.get_json().get('password')
-    if not user_password:
-        return jsonify(error="Missing password"), 400
+    if http_code != 200:
+        return jsonify(error=error_message), 400
 
     user = UserModel.query.filter_by(email = user_email).first()
     if user:
@@ -135,7 +136,7 @@ def users(user):
 @authenticate
 @limiter.limit("10/minute")
 def users_get(user, user_id):
-    print(user_id)
+    """Get a user by id."""
     user = UserModel.query.get(user_id)
     if not user:
         return jsonify(error="User not found"), 404
@@ -149,6 +150,7 @@ def users_get(user, user_id):
 
 @app.after_request
 def log_request_data(response):
+    """Log request and response data to the console and database."""
     app.logger.debug('Response Headers: %s', response.headers)
 
     request_body = ''
@@ -162,7 +164,6 @@ def log_request_data(response):
         response_body = 'REDACTED'
         
     app.logger.debug('Response Body: %s', response_body)
-            
 
     sanitized_headers = ''
     for key, val in request.headers:

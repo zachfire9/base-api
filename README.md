@@ -93,6 +93,14 @@ Start the app:
 python main.py
 ```
 
+## Unit Tests
+
+Run the unit test from the root of the project:
+
+```
+python -m unittest tests\validate\test_user.py
+```
+
 ## ToDo
 
 * ACL
